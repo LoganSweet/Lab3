@@ -2,9 +2,10 @@
 
 module decoder1to32
 (
-output[31:0]	out,
-input		enable,
-input[4:0]	address
+output[31:0]	InstructIn,
+output[31:0]	DataReg,
+input [31:0]	enable,
+input	address
 );
-    assign out = enable<<address; 
+    assign {DataReg, InstructIn} = enable<<address; // SHIFT ENABLE LEFT BY ADDRESS 
 endmodule

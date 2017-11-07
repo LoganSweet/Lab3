@@ -3,6 +3,7 @@
 `include "register.v"
 `include "regfile.v"
 `include "datamemory.v"
+`include "decoder.v"
 
 module singlestream(
 // inputs should be controls - which command are we doing
@@ -42,6 +43,12 @@ wire [31:0] MemOut;
 wire Mem_WE;
 wire [31:0] B;
 
+wire [31:0] InstructIn;
+wire [31:0] DataReg;
+wire Dec1control;
+
+
+
 register PCreg(PC, choosePC, PCcontrol , clk); // output, input, writeenable, clock
 
 // command for both of these two ALUs will always be ADD
@@ -56,9 +63,11 @@ mux3to1by32 Mux6(choosePC, Mux6control, newPC, jConcat, A); // output, address, 
 
 mux2to1by32 Mux2(MemAddr, Mux2control, PC, ALU3res);
 
-datamemory(clk, MemOut, MemAddr, Mem_WE, B);
+datamemory Memory(clk, MemOut, MemAddr, Mem_WE, B);
 
+decoder1to32 Dec1(InstructIn, DataReg, MemOut, Dec1control);
 
+//regfile InstructionRegister(); // DRAW OUT HOW THIS SHOULD WORK :(
 
 
 
