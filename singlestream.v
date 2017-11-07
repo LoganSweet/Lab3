@@ -9,7 +9,6 @@ module singlestream(
 // inputs should be controls - which command are we doing
 input clk; // internal clock
 
-
 );
 
 wire [31:0] PC = 32'b0; // initial assignment - PC is 32 zeros 
@@ -47,7 +46,26 @@ wire [31:0] InstructIn;
 wire [31:0] DataReg;
 wire Dec1control;
 
+wire [4:0] RS;
+wire [4:0] RT;
+wire [4:0] RD;
+wire [15:0] imm;
+wire [25:0] jaddr;
 
+wire [1:0] Mux3control;
+wire [31:0] RegAw;
+wire [31:0] RegDw;
+wire Mux4control;
+
+wire Mux5control;
+wire [31:0] Mux5out;
+
+wire carryout3; // trash from ALU2 that we don't need
+wire zero3;
+wire overflow3;
+wire ALU3control;
+
+wire [31:0] Jconcat;
 
 register PCreg(PC, choosePC, PCcontrol , clk); // output, input, writeenable, clock
 
@@ -59,16 +77,38 @@ ALU ALU2(ALU2out, carryout2, zero2, overflow2, PCp4, SEimm, ADD);
 
 mux2to1by32 Mux1(newPC, Mux1control, ALU2out, PCp4); // output, address, ALU2out, PCp4
 
-mux3to1by32 Mux6(choosePC, Mux6control, newPC, jConcat, A); // output, address, newPC, jConcat, A
+mux3to1by32 Mux6(choosePC, Mux6control, A, jConcat, newPC); // output, address, newPC, jConcat, A
 
-mux2to1by32 Mux2(MemAddr, Mux2control, PC, ALU3res);
+mux2to1by32 Mux2(MemAddr, Mux2control, ALU3res, PC);
 
 datamemory Memory(clk, MemOut, MemAddr, Mem_WE, B);
 
 decoder1to32 Dec1(InstructIn, DataReg, MemOut, Dec1control);
 
 //regfile InstructionRegister(); // DRAW OUT HOW THIS SHOULD WORK :(
+assign RS = PC[25:21];
+assign RT = PC[20:16];
+assign RD = PC[15:11];
+assign imm = PC[15:0];
+assign jaddr = PC[25:0];
 
+mux3to1by32 Mux3(RegAw, Mux3control, 5'b11111, RT, RD); //output, address, rd, rt, 31
+mux2to1by32 Mux4(RegDw, Mux4control, DataReg, ALU3res); 
+
+regfile DataRegister(A, B, RegDw, RS, RT, RegAw, RegWE, clk);
+
+// sign extend
+assign SEimm = {16{imm[15]}, imm};
+
+//mux5
+mux2to1by32 Mux5(Mux5out, Mux5control, SEimm, B);
+
+//alu3
+ALU ALU3(ALU3res, carryout3, zero3, overflow3, A, Mux5out, ALU3control);
+
+// mux 6
+assign Jconcat = {PC[31:28], jaddr, "00"};
+mux3to1by32 Mux6(choosePC, Mux6Control, A, Jconcat, newPC);
 
 
 endmodule

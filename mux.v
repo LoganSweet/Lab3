@@ -32,9 +32,10 @@ module mux3to1by32
 (
 output  [31:0]  choosePC,
 input [1:0]  address,
-input[31:0] newPC,
+input[31:0] A,
 input[31:0] jConcat,
-input[31:0] A
+input[31:0] newPC
+
 );
 wire[31:0] mux[3:0];			// Create a 2D array of wires
 assign mux[0] = newPC;
