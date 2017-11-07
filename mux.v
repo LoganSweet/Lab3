@@ -14,6 +14,38 @@ assign outputofmux=inputsofmux[address];
 
 endmodule
 
+module mux2to1by32
+(
+output  [31:0]  muxout,
+input  address,
+input[31:0] ALU2out,
+input[31:0] PCp4
+);
+wire[31:0] mux[1:0];			// Create a 2D array of wires
+assign mux[0] = PCp4;
+assign mux[1] = ALU2out;
+assign muxout = mux[address];	// Connect the output of the array
+
+endmodule
+
+module mux3to1by32
+(
+output  [31:0]  choosePC,
+input [1:0]  address,
+input[31:0] newPC,
+input[31:0] jConcat,
+input[31:0] A
+);
+wire[31:0] mux[3:0];			// Create a 2D array of wires
+assign mux[0] = newPC;
+assign mux[1] = jConcat;
+assign mux[2] = A;
+assign mux[3] = A; // this should never happen
+assign choosePC = mux[address];	// Connect the output of the array
+
+endmodule
+
+
 
 module mux32to1by32
 (
