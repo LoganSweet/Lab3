@@ -92,8 +92,8 @@ assign RD = PC[15:11];
 assign imm = PC[15:0];
 assign jaddr = PC[25:0];
 
-mux3to1by32 Mux3(RegAw, Mux3control, 5'b11111, RT, RD); //output, address, rd, rt, 31
-mux2to1by32 Mux4(RegDw, Mux4control, DataReg, ALU3res); 
+mux3to1by32 Mux3(RegAw, Mux3control, 5'b11111, RT, RD); //output, address, 31, rd, rt
+mux3to1by32 Mux4(RegDw, Mux4control, newPC, DataReg, ALU3res); 
 
 regfile DataRegister(A, B, RegDw, RS, RT, RegAw, RegWE, clk);
 
