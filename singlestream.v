@@ -1,21 +1,23 @@
 `include "alu_structural.v"
-`include "mux.v"
-`include "register.v"
+//`include "mux.v"
+//`include "register.v"
 `include "regfile.v"
 `include "datamemory.v"
-`include "decoder.v"
+//`include "decoder.v"
 
 module singlestream(
 // inputs should be controls - which command are we doing
-input clk; // internal clock
-
+input clk // internal clock
 );
+
+//  need to add FSM here
+
 
 wire [31:0] PC = 32'b0; // initial assignment - PC is 32 zeros 
 wire [31:0] PCp4;
 wire choosePC; // output of mux 6, goes into Program Counter register
 wire PCcontrol; // to control the Program Counter - unclear when this should be true
-Four = 32'b4 // how do you write the number 4 with thirty-two bits
+reg [31:0] Four = 32'b100;
 
 wire carryout1; // trash from ALU1 that we don't need
 wire zero1; // ^^
@@ -25,7 +27,7 @@ wire carryout2; // trash from ALU2 that we don't need
 wire zero2;
 wire overflow2;
 wire [31:0] SEimm; // need to figure out how this actually happens
-ADD = 3'b000;
+reg [2:0] ADD = 3'b000;
 
 wire [31:0] newPC; // output of mux 1
 wire Mux1control; 
@@ -65,8 +67,6 @@ wire zero3;
 wire overflow3;
 wire ALU3control;
 
-wire [31:0] Jconcat;
-
 register PCreg(PC, choosePC, PCcontrol , clk); // output, input, writeenable, clock
 
 // command for both of these two ALUs will always be ADD
@@ -94,11 +94,10 @@ assign jaddr = PC[25:0];
 
 mux3to1by32 Mux3(RegAw, Mux3control, 5'b11111, RT, RD); //output, address, 31, rd, rt
 mux3to1by32 Mux4(RegDw, Mux4control, newPC, DataReg, ALU3res); 
-
 regfile DataRegister(A, B, RegDw, RS, RT, RegAw, RegWE, clk);
 
 // sign extend
-assign SEimm = {16{imm[15]}, imm};
+assign SEimm = {16*{imm[15]}, imm};
 
 //mux5
 mux2to1by32 Mux5(Mux5out, Mux5control, SEimm, B);
@@ -107,8 +106,8 @@ mux2to1by32 Mux5(Mux5out, Mux5control, SEimm, B);
 ALU ALU3(ALU3res, carryout3, zero3, overflow3, A, Mux5out, ALU3control);
 
 // mux 6
-assign Jconcat = {PC[31:28], jaddr, "00"};
-mux3to1by32 Mux6(choosePC, Mux6Control, A, Jconcat, newPC);
+assign jConcat = {nPC[31:28], jaddr, 2'b00}; // DOUBLE CHECK - WHICH PC VALUES GO HERE
+//mux3to1by32 Mux6(choosePC, Mux6Control, A, jConcat, newPC);
 
 
 endmodule

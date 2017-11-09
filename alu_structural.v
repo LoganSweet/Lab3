@@ -273,7 +273,7 @@ input [size-1:0]carryin  // we think this doesn't do anything but don't want to 
 	wire SLTflag1;
 	wire nCmd2;
                
-    bot n0(nCmd2, Command[2]);
+    not n0(nCmd2, Command[2]);
 
 // we do weird things where we do subtraction to produce NewVal, then assign either NewVal or 0 to AddSubSLTSum (since if SLT is triggered, every bit except maybe the least significant will be 0), and then determine whether A<B at the very end, when we set the least significant bit to 0 or 1 depending 
 

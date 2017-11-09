@@ -2,6 +2,8 @@
 // Finite State Machine
 //------------------------------------------------------------------------
 
+`include "alu_structural.v"
+
 module StateMachine
 (
 	input[5:0] opcode,  
@@ -9,21 +11,30 @@ module StateMachine
 	input clk
 );
 
-wire PC; // this controls whether the PC flip flop is enabled
-wire Mux1; // Mux1 controller
-wire Mux2; // Mux2 controller
-wire MemWrEn; // is memory write enable on or off
-wire Dec1; // Dec1 controller
-wire [1:0] Mux3;
-wire [1:0] Mux4;
-wire RegFWrEn;
-wire Mux5;
-wire [2:0] ALU3;
-wire [1:0] Mux6;
+reg PC; // this controls whether the PC flip flop is enabled
+reg Mux1; // Mux1 controller
+reg Mux2; // Mux2 controller
+reg MemWrEn; // is memory write enable on or off
+reg Dec1; // Dec1 controller
+reg [1:0] Mux3;
+reg [1:0] Mux4;
+reg RegFWrEn;
+reg Mux5;
+reg [2:0] ALU3;
+reg [1:0] Mux6;
 
 localparam LoadWord = 6'b000000; // this should be some number that gives us enough options to have all of our commands
 localparam StoreWord = 6'b000001;
-// etc
+localparam Jump = 6'b000010;
+localparam JumpReg = 6'b000011;
+localparam JumpAndLink = 6'b000100;
+localparam BranchNotEqual = 6'b000101;
+localparam XORI = 6'b000110;
+localparam Add = 6'b000111;
+localparam Addi = 6'b001000;
+localparam Sub = 6'b001001;
+localparam SLT = 6'b001010;
+reg [5:0] command;
 
 reg[5:0] counter = 0;
 
@@ -37,7 +48,7 @@ if (opcode == LoadWord)
 
 counter = counter + 1 ; 
 
-if (counter == [the max number we need])
+if (counter == 3)
 	counter <= 0 ; 
 
 case (command)
@@ -128,6 +139,7 @@ case (command)
 	end // end of jump register
 	
 	JumpAndLink: begin
+		if (counter == 0) begin
 		PC <= 		1 ;
 		Mux1 <= 	0 ;
 		Mux2 <= 	0 ;
@@ -139,8 +151,7 @@ case (command)
 		Mux5 <= 	0 ;
 		//ALU3 <= 	nothing? ;	
 		Mux6 <= 	2'b01 ;
-		
-		//counter = counter +1 ; 		// maybe we don't need to do this since there isn't a second thing
+		end
 	end // end of jump and link
 	
 	BranchNotEqual: begin
@@ -250,12 +261,6 @@ case (command)
 	end // end of sub
 	
 	
-		
-	
-	
-/////////////////////////////////////////////////////////////////
-/////////   ones below here need to be finished /////////////////
-/////////////////////////////////////////////////////////////////
 	SLT: begin
 		if (counter == 0) begin
 			PC <= 		1 ;
@@ -270,16 +275,14 @@ case (command)
 			ALU3 <= 	3'b011 ;	
 			Mux6 <= 	2'b00 ;
 		end 		// end of the thing when counter is 0 
-		if (counter == 1) begin
-		end 		// end of the stage when counter is 1 
+		if (counter == 1) begin	
+			PC <= 		0 ;  	
+			Mux3 <= 	2'b01 ;
+			RegFWrEn <= 1 ; 
+		end // end of the stage when counter is 1 
 	end // end of set less than 
-	
 
-end 
-
-
-
-
+endcase
 
 end // ends the always @ pos clock thing 
 
