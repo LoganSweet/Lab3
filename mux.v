@@ -16,12 +16,27 @@ input  address,
 input[31:0] ALU2out,
 input[31:0] PCp4
 );
-wire[31:0] mux[1:0];			// Create a 2D array of wires
+wire[1:0] mux[1:0];			// Create a 2D array of wires
 assign mux[0] = PCp4;
 assign mux[1] = ALU2out;
 assign muxout = mux[address];	// Connect the output of the array
 
 endmodule
+
+module mux3to1by5
+(
+output  [4:0]  regfileaddress,
+input [1:0]  mux3ctrl,
+input[4:0] thirtyone,
+input[4:0] rt,
+input[4:0] rd
+
+);
+    wire[3:0] inputs = {thirtyone, thirtyone, rt, rd};
+    wire[1:0] address = {mux3ctrl[1], mux3ctrl[0]};
+    assign regfileaddress = inputs[address];
+endmodule
+
 
 module mux3to1by32
 (

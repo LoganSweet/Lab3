@@ -4,14 +4,12 @@
 :vpi_module "system";
 :vpi_module "v2005_math";
 :vpi_module "va_math";
-S_0x21efee0 .scope module, "mux32to1by1" "mux32to1by1" 2 1;
+S_0x887ed0 .scope module, "signextend" "signextend" 2 1;
  .timescale 0 0;
-v0x21ef740_0 .net "address", 4 0, C4<zzzzz>; 0 drivers
-v0x22316a0_0 .net "inputs", 31 0, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; 0 drivers
-v0x2231740_0 .net "out", 0 0, L_0x22317e0; 1 drivers
-L_0x22317e0 .part/v C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>, C4<zzzzz>, 1;
+v0x887310_0 .net "SEimm", 31 0, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; 0 drivers
+v0x8c97d0_0 .net "immediate", 15 0, C4<zzzzzzzzzzzzzzzz>; 0 drivers
 # The file index is used to find the file name in the following table.
 :file_names 3;
     "N/A";
     "<interactive>";
-    "newmux.v";
+    "signextend.v";

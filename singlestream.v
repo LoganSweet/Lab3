@@ -1,9 +1,6 @@
 `include "alu_structural.v"
-//`include "mux.v"
-//`include "register.v"
 `include "regfile.v"
 `include "datamemory.v"
-//`include "decoder.v"
 
 module singlestream(
 // inputs should be controls - which command are we doing
@@ -12,10 +9,9 @@ input clk // internal clock
 
 //  need to add FSM here
 
-
 wire [31:0] PC = 32'b0; // initial assignment - PC is 32 zeros 
 wire [31:0] PCp4;
-wire choosePC; // output of mux 6, goes into Program Counter register
+wire [31:0] choosePC; // output of mux 6, goes into Program Counter register
 wire PCcontrol; // to control the Program Counter - unclear when this should be true
 reg [31:0] Four = 32'b100;
 
@@ -34,7 +30,7 @@ wire Mux1control;
 
 wire [31:0] ALU2out;
 
-wire Mux6control; 
+wire [1:0] Mux6control; 
 wire [31:0] jConcat;
 wire [31:0] A;
 
@@ -71,8 +67,6 @@ wire ALU3control;
 
 register PCreg(PC, choosePC, PCcontrol , clk); // output, input, writeenable, clock
 
-// command for both of these two ALUs will always be ADD
-
 ALU ALU1(PCp4, carryout1, zero1, overflow1, PC, Four, ADD); // output[31:0]  result, output carryout, output zero, output overflow, input[31:0] operandA, input[31:0] operandB, input[2:0] command
 
 ALU ALU2(ALU2out, carryout2, zero2, overflow2, PCp4, SEimm, ADD);
@@ -85,22 +79,21 @@ mux2to1by32 Mux2(MemAddr, Mux2control, ALU3res, PC);
 
 datamemory Memory(clk, MemOut, MemAddr, Mem_WE, B);
 
-decoder1to32 Dec1(InstructIn, DataReg, MemOut, Dec1control);
+decoder1to32 Dec1(InstructIn, DataReg, Dec1control, MemOut);
 
-//regfile InstructionRegister(); // DRAW OUT HOW THIS SHOULD WORK :(
+// CHECK WHICH PC VALUES SHOULD ACTUALLY GO HERE
 assign RS = PC[25:21];
 assign RT = PC[20:16];
 assign RD = PC[15:11];
 assign imm = PC[15:0];
 assign jaddr = PC[25:0];
 
-mux3to1by32 Mux3(RegAw, Mux3control, 5'b11111, RT, RD); //output, address, 31, rd, rt
+mux3to1by5 Mux3(RegAw, Mux3control, 5'b11111, RT, RD); //output, address, 31, rd, rt
 mux3to1by32 Mux4(RegDw, Mux4control, newPC, DataReg, ALU3res); 
 regfile DataRegister(A, B, RegDw, RS, RT, RegAw, RegWE, clk);
 
 // sign extend
-assign SEimm = {{16{imm[15]}}, {imm}};
-
+signextend extend(imm, SEimm);
 //mux5
 mux2to1by32 Mux5(Mux5out, Mux5control, SEimm, B);
 
@@ -108,8 +101,28 @@ mux2to1by32 Mux5(Mux5out, Mux5control, SEimm, B);
 ALU ALU3(ALU3res, carryout3, zero3, overflow3, A, Mux5out, ALU3control);
 
 // mux 6
-assign jConcat = {PC[31:28], jaddr, 2'b00}; // DOUBLE CHECK - WHICH PC VALUES GO HERE
-
+wire [29:0] jConcat_intermediate;
+assign jConcat_intermediate = {PC[31:28], jaddr}; // DOUBLE CHECK - WHICH PC VALUES GO HERE
+assign jConcat = {jConcat_intermediate, 2'b00};
 
 
 endmodule
+
+
+
+module signextend(
+input [15:0] immediate,
+output [31:0] SEimm
+);
+
+always @(posedge immediate) begin
+	if (immediate[15] == 0)
+		SEimm <= {16'b0000000000000000, immediate};
+	else if (immediate[15] == 1)
+		SEimm <= {16'b1111111111111111, immediate};
+end
+
+endmodule
+
+
+
