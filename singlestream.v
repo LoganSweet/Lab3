@@ -32,6 +32,8 @@ reg [2:0] ADD = 3'b000;
 wire [31:0] newPC; // output of mux 1
 wire Mux1control; 
 
+wire [31:0] ALU2out;
+
 wire Mux6control; 
 wire [31:0] jConcat;
 wire [31:0] A;
@@ -97,7 +99,7 @@ mux3to1by32 Mux4(RegDw, Mux4control, newPC, DataReg, ALU3res);
 regfile DataRegister(A, B, RegDw, RS, RT, RegAw, RegWE, clk);
 
 // sign extend
-assign SEimm = {16*{imm[15]}, imm};
+assign SEimm = {{16{imm[15]}}, {imm}};
 
 //mux5
 mux2to1by32 Mux5(Mux5out, Mux5control, SEimm, B);
@@ -106,8 +108,8 @@ mux2to1by32 Mux5(Mux5out, Mux5control, SEimm, B);
 ALU ALU3(ALU3res, carryout3, zero3, overflow3, A, Mux5out, ALU3control);
 
 // mux 6
-assign jConcat = {nPC[31:28], jaddr, 2'b00}; // DOUBLE CHECK - WHICH PC VALUES GO HERE
-//mux3to1by32 Mux6(choosePC, Mux6Control, A, jConcat, newPC);
+assign jConcat = {PC[31:28], jaddr, 2'b00}; // DOUBLE CHECK - WHICH PC VALUES GO HERE
+
 
 
 endmodule
