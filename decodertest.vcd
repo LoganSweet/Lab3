@@ -1,0 +1,59 @@
+$date
+	Sun Nov 12 22:15:35 2017
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module testdecoder $end
+$var wire 32 ! DecOut [31:0] $end
+$var reg 5 " address [4:0] $end
+$var reg 1 # enable $end
+$scope module x $end
+$var wire 32 $ DecOut [31:0] $end
+$var wire 5 % address [4:0] $end
+$var wire 1 & enable $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+1&
+b1 %
+b10 $
+1#
+b1 "
+b10 !
+$end
+#200
+0#
+0&
+b0 !
+b0 $
+#400
+1#
+1&
+b10000000000 !
+b10000000000 $
+b1010 "
+b1010 %
+#600
+0#
+0&
+b0 !
+b0 $
+#800
+1#
+1&
+b100000000000 !
+b100000000000 $
+b1011 "
+b1011 %
+#1000
+0#
+0&
+b0 !
+b0 $
+#1200

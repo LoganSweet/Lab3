@@ -1,7 +1,12 @@
 module datamemory
 #(
     parameter addresswidth  = 32,
-    parameter depth         = 2**addresswidth,
+ //   parameter depth         = 2**addresswidth,
+ // Ben hill says to make this 16kiB, or (0x4000 bytes)
+  // I've tried every converted on the internet and those numbers do NOT match up. 
+  // kiB could be kibi- or kilo-, but neither seem right. 
+  // for now, I'll try just 16 as depth and see what happens? 
+  	parameter depth 		= 16,
     parameter width         = 32
 )
 (
