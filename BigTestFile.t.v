@@ -6,19 +6,20 @@
 
 module testdecoder();
 
-wire[31:0]	DecOut;
-reg			enable;  	//input
-reg [4:0]	address;	//input 
-    
-decoder1to32 x(DecOut, enable, address);    
+wire[31:0]	InstructIn;
+wire[31:0] 	DataReg;  	//input
+reg 		enable;
+reg [4:0]	DataIn;	//input 
+
+decoder1to32 x(InstructIn, DataReg, enable, DataIn);    
 
 initial begin
 $dumpfile("decodertest.vcd");
 $dumpvars();
     
-$display("addr |enbl|             DecOut	");
+$display("InstructIn                    |enbl|             DecOut	");
 address = 0001; enable = 1; #200
-$display("%b|  %b |%b ", address, enable, DecOut);
+$display("%b|  %b |%b|%b ", DataIn, enable, InstructIn, DataReg);
 
 address = 0001; enable = 0; #200
 $display("%b|  %b |%b ", address, enable, DecOut);
