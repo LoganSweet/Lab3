@@ -1,13 +1,16 @@
-`include "alu_structural.v"
+//`include "alu_structural.v"
 `include "regfile.v"
 `include "datamemory.v"
+`include "StateMachine.v"
 
 module singlestream(
 // inputs should be controls - which command are we doing
+input [5:0] OpCode,
 input clk // internal clock
 );
 
 //  need to add FSM here
+StateMachine FSM(OpCode, zero3, clk, PCcontrol, Mux1control, Mux2control, Mem_WE, Dec1control, Mux3control, Mux4control, RegWE, Mux5control, ALU3control, Mux6control);
 
 wire [31:0] PC = 32'b0; // initial assignment - PC is 32 zeros 
 wire [31:0] PCp4;
@@ -55,7 +58,8 @@ wire [25:0] jaddr;
 wire [1:0] Mux3control;
 wire [31:0] RegAw;
 wire [31:0] RegDw;
-wire Mux4control;
+wire [1:0] Mux4control;
+wire RegWE;
 
 wire Mux5control;
 wire [31:0] Mux5out;
@@ -63,9 +67,9 @@ wire [31:0] Mux5out;
 wire carryout3; // trash from ALU2 that we don't need
 wire zero3;
 wire overflow3;
-wire ALU3control;
+wire [2:0] ALU3control;
 
-register PCreg(PC, choosePC, PCcontrol , clk); // output, input, writeenable, clock
+register32 PCreg(PC, choosePC, PCcontrol , clk); // output, input, writeenable, clock
 
 ALU ALU1(PCp4, carryout1, zero1, overflow1, PC, Four, ADD); // output[31:0]  result, output carryout, output zero, output overflow, input[31:0] operandA, input[31:0] operandB, input[2:0] command
 
@@ -112,7 +116,7 @@ endmodule
 
 module signextend(
 input [15:0] immediate,
-output [31:0] SEimm
+output reg [31:0] SEimm
 );
 
 always @(posedge immediate) begin

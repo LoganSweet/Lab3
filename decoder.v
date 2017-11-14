@@ -1,18 +1,29 @@
 // decoder for lab 3 
  
-module decoder1to32
+module decoder32to2
 (
-output[31:0]	InstructIn,
-output[31:0]	DataReg,
-input			enable,
-input [31:0]	DataIn
+
+output reg [size-1:0]	InstructIn,
+output reg [size-1:0]	DataReg,
+input			address, // address - where does DataIn go?
+input [size-1:0]	DataIn
 );
-always @(input) begin
-	if (enable == 0)
+parameter size = 32;
+always @(DataIn) begin
+	if (address == 0)
 		InstructIn <= DataIn; 
-	if (enable == 1)
+	if (address == 1)
 		DataReg <= DataIn; 
 end 
 endmodule
 
+module decoder1to32
+(
+output[31:0]	out,
+input		enable,
+input[4:0]	address
+);
+    assign out = enable<<address; 
+
+endmodule
 
