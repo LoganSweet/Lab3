@@ -9,7 +9,7 @@ module StateMachine
 	input[5:0] opcode,  
 	input zeroflag3,	
 	input clk,
-	output reg PC,
+	output reg PCcontrol,
 	output reg Mux1,
 	output reg Mux2,
 	output reg MemWrEn,
@@ -35,21 +35,21 @@ reg Mux5;
 reg [2:0] ALU3;
 reg [1:0] Mux6;
 */ 
-localparam LoadWord = 6'b000000; // this should be some number that gives us enough options to have all of our commands
-localparam StoreWord = 6'b000001;
+localparam LoadWord = 6'b100011; // this should be some number that gives us enough options to have all of our commands
+localparam StoreWord = 6'b101011;
 localparam Jump = 6'b000010;
-localparam JumpReg = 6'b000011;
-localparam JumpAndLink = 6'b000100;
+localparam JumpReg = 6'b001000;
+localparam JumpAndLink = 6'b000011;
 localparam BranchNotEqual = 6'b000101;
-localparam XORI = 6'b000110;
-localparam Add = 6'b000111;
-localparam Addi = 6'b001000;
-localparam Sub = 6'b001001;
-localparam SLT = 6'b001010;
+localparam XORI = 6'b001110;
+localparam Add = 6'b100000;
+localparam Addi = 6'b001001; // MIPS is 001000
+localparam Sub = 6'b100010;
+localparam SLT = 6'b101010;
 
 reg [5:0] command;
 
-reg [5:0] counter = 000000;
+reg [5:0] counter = 6'b000000;
 
 
 always @(posedge clk) begin
@@ -57,8 +57,6 @@ if (counter == 2)
 	counter <= 0 ;
 else 
 	counter = counter + 1 ;  
-
-
 
 if (opcode == LoadWord)
 	command <= LoadWord;
@@ -100,7 +98,7 @@ case (command)
 		// maybe needs to establish that counter is zero here? 	
 		// if it does, then it needs to be at the beginning (or end?) of each one 
 		if (counter == 1) begin
-			PC <= 		1 ;
+			PCcontrol <= 		1 ;
 			Mux1 <= 	0 ;
 			Mux2 <= 	0 ;
 			MemWrEn <= 	0 ; 
@@ -114,7 +112,7 @@ case (command)
 		end 		// ends the first stage, counter 0 
 		
 		if (counter == 2) begin	
-			PC <= 		0 ;	
+			PCcontrol <= 		0 ;	
 			Mux2 <= 	1 ;	
 			Dec1 <= 	0 ; 	
 			Mux3 <= 	2'b01 ;
@@ -127,7 +125,7 @@ case (command)
 	StoreWord: begin	
 	
 		if (counter == 1) begin
-			PC <= 		1 ;
+			PCcontrol <= 		1 ;
 			Mux1 <= 	0 ;
 			Mux2 <= 	0 ;
 			MemWrEn <= 	0 ; 
@@ -141,7 +139,7 @@ case (command)
 		end 			// end the first stage when counter is 0 
 
 		if (counter == 2) begin		
-			PC <= 		0 ;
+			PCcontrol <= 		0 ;
 			Mux2 <= 	1 ;	
 			MemWrEn <= 	1 ; 
 		end 		// end the second stage when counter is 1 		
@@ -150,7 +148,7 @@ case (command)
 	Jump: begin
 	
 		if (counter == 1) begin
-			PC <= 		1 ;
+			PCcontrol <= 		1 ;
 			Mux1 <= 	0 ;
 			Mux2 <= 	0 ;
 			MemWrEn <= 	0 ; 
@@ -167,7 +165,7 @@ case (command)
 	JumpReg: begin
 	
 		if (counter == 1) begin
-			PC <= 		1 ;
+			PCcontrol <= 		1 ;
 			Mux1 <= 	0 ;
 			Mux2 <= 	0 ;
 			MemWrEn <= 	0 ; 
@@ -183,7 +181,7 @@ case (command)
 	
 	JumpAndLink: begin
 		if (counter == 1) begin
-		PC <= 		1 ;
+		PCcontrol <= 		1 ;
 		Mux1 <= 	0 ;
 		Mux2 <= 	0 ;
 		MemWrEn <= 	0 ; 
@@ -200,7 +198,7 @@ case (command)
 	BranchNotEqual: begin
 	
 		if (counter == 1) begin
-			PC <= 		1 ;
+			PCcontrol <= 		1 ;
 			Mux1 <= 	0 ;
 			Mux2 <= 	0 ;
 			MemWrEn <= 	0 ; 
@@ -213,14 +211,14 @@ case (command)
 			Mux6 <= 	2'b00 ;
 		end 		// end of the 0th stage when counter is zero 
 		if (counter == 2) begin
-			PC <= 		0 ;
+			PCcontrol <= 		0 ;
 			Mux1 <= 	~zeroflag3 ;
 		end 			// end of the stage when counter is 1 
 	end // end of branch if not equal
 	
 	XORI: begin
 		if (counter == 1) begin
-			PC <= 		1 ;
+			PCcontrol <= 		1 ;
 			Mux1 <= 	0 ;
 			Mux2 <= 	0 ;
 			MemWrEn <= 	0 ; 
@@ -233,7 +231,7 @@ case (command)
 			Mux6 <= 	2'b00 ;
 		end 		// end of the thing when counter is 0 
 		if (counter == 2) begin
-			PC <= 		0 ;  	
+			PCcontrol <= 		0 ;  	
 			Mux3 <= 	2'b01 ;
 			RegFWrEn <= 1 ; 
 		end 		// end of the stage when counter is 1 
@@ -242,7 +240,7 @@ case (command)
 	
 	Add: begin
 		if (counter == 1) begin
-			PC <= 		1 ;
+			PCcontrol <= 		1 ;
 			Mux1 <= 	0 ;
 			Mux2 <= 	0 ;
 			MemWrEn <= 	0 ; 
@@ -255,7 +253,7 @@ case (command)
 			Mux6 <= 	2'b00 ;
 		end 		// end of the thing when counter is 0 
 		if (counter == 	2) begin
-			PC <= 		0 ;  	
+			PCcontrol <= 		0 ;  	
 			Mux3 <= 	2'b01 ;
 			RegFWrEn <= 1 ; 
 		end 		// end of the stage when counter is 1 
@@ -263,7 +261,7 @@ case (command)
 	
 	Addi: begin
 		if (counter == 1) begin
-			PC <= 		1 ;
+			PCcontrol <= 		1 ;
 			Mux1 <= 	0 ;
 			Mux2 <= 	0 ;
 			MemWrEn <= 	0 ; 
@@ -276,7 +274,7 @@ case (command)
 			Mux6 <= 	2'b00 ;		
 		end 		// end of the thing when counter is 0 
 		if (counter == 2) begin
-			PC <= 		0 ;  	
+			PCcontrol <= 		0 ;  	
 			Mux3 <= 	2'b00 ;
 			RegFWrEn <= 1 ; 
 		end 		// end of the stage when counter is 1 
@@ -284,7 +282,7 @@ case (command)
 	
 	Sub: begin
 		if (counter == 1) begin
-			PC <= 		1 ;
+			PCcontrol <= 		1 ;
 			Mux1 <= 	0 ;
 			Mux2 <= 	0 ;
 			MemWrEn <= 	0 ; 
@@ -297,7 +295,7 @@ case (command)
 			Mux6 <= 	2'b00 ;
 		end 		// end of the thing when counter is 0 
 		if (counter == 2) begin
-			PC <= 		0 ;  	
+			PCcontrol <= 		0 ;  	
 			Mux3 <= 	2'b01 ;
 			RegFWrEn <= 1 ; 
 		end 		// end of the stage when counter is 1 
@@ -306,7 +304,7 @@ case (command)
 	
 	SLT: begin
 		if (counter == 1) begin
-			PC <= 		1 ;
+			PCcontrol <= 		1 ;
 			Mux1 <= 	0 ;
 			Mux2 <= 	0 ;
 			MemWrEn <= 	0 ; 
@@ -319,7 +317,7 @@ case (command)
 			Mux6 <= 	2'b00 ;
 		end 		// end of the thing when counter is 0 
 		if (counter == 2) begin	
-			PC <= 		0 ;  	
+			PCcontrol <= 		0 ;  	
 			Mux3 <= 	2'b01 ;
 			RegFWrEn <= 1 ; 
 		end // end of the stage when counter is 1 

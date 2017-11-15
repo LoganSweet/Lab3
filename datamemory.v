@@ -1,4 +1,4 @@
-module datamemory
+/*module datamemory
 #(
     parameter addresswidth  = 32,
  //   parameter depth         = 2**addresswidth,
@@ -16,8 +16,6 @@ module datamemory
     input                       writeEnable,
     input [width-1:0]           dataIn
 );
-
-
     reg [width-1:0] memory [depth-1:0];
     assign dataOut = memory[address]; // moved out of the always @posedge clk
     
@@ -25,5 +23,25 @@ module datamemory
         if(writeEnable)
             memory[address] <= dataIn;
     end
-
+endmodule*/
+module datamemory
+(
+  input clk, regWE,
+  input[31:0] Addr,
+  input[31:0] DataIn,
+  output[31:0]  DataOut
+);
+  
+  reg [31:0] mem[1023:0];  
+  
+  always @(posedge clk) begin
+    if (regWE) begin
+      mem[Addr] <= DataIn;
+    end
+  end
+  
+  initial $readmemh("Test.dat", mem);
+    
+  assign DataOut = mem[Addr];
 endmodule
+

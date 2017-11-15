@@ -1,3 +1,5 @@
+li $sp 0x3ffc
+
 main: 
 # take in a number
 # want to add sum of all numbers up until that point
@@ -41,9 +43,12 @@ add $t7, $t5, $t7 # reassign s6 to s5
 bne $a0, $t6, adding # if s6 does not equal the original number (3), do another addition
 add $t4, $t7, $zero
 sw $t5, ($s2)
-li $v0, 10
-syscall
 
+#li $v0, 10
+#syscall
+
+end:
+j end
 
 
 

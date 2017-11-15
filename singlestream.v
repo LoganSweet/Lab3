@@ -5,12 +5,14 @@
 
 module singlestream(
 // inputs should be controls - which command are we doing
-input [5:0] OpCode,
+//input [5:0] OpCode,
 input clk // internal clock
 );
-
-//  need to add FSM here
+assign OpCode = InstructIn[31:26];
+wire [5:0] OpCode = 6'b100001;
 StateMachine FSM(OpCode, zero3, clk, PCcontrol, Mux1control, Mux2control, Mem_WE, Dec1control, Mux3control, Mux4control, RegWE, Mux5control, ALU3control, Mux6control);
+
+
 
 wire [31:0] PC = 32'b0; // initial assignment - PC is 32 zeros 
 wire [31:0] PCp4;
@@ -39,7 +41,7 @@ wire [31:0] A;
 
 wire [31:0] MemAddr;
 wire Mux2control;
-wire [31:0] ALU3res;
+wire [31:0] ALU3res =32'b0;
 
 wire [31:0] MemOut;
 wire Mem_WE;
@@ -56,7 +58,7 @@ wire [15:0] imm;
 wire [25:0] jaddr;
 
 wire [1:0] Mux3control;
-wire [31:0] RegAw;
+wire [4:0] RegAw;
 wire [31:0] RegDw;
 wire [1:0] Mux4control;
 wire RegWE;
@@ -81,16 +83,18 @@ mux3to1by32 Mux6(choosePC, Mux6control, A, jConcat, newPC); // output, address, 
 
 mux2to1by32 Mux2(MemAddr, Mux2control, ALU3res, PC);
 
-datamemory Memory(clk, MemOut, MemAddr, Mem_WE, B);
+//datamemory Memory(clk, MemOut, MemAddr, Mem_WE, B);
+datamemory Memory(clk, Mem_WE, MemAddr, B, MemOut);
 
-decoder1to32 Dec1(InstructIn, DataReg, Dec1control, MemOut);
+decoder32to2 Dec1(InstructIn, DataReg, Dec1control, MemOut);
 
-// CHECK WHICH PC VALUES SHOULD ACTUALLY GO HERE
-assign RS = PC[25:21];
-assign RT = PC[20:16];
-assign RD = PC[15:11];
-assign imm = PC[15:0];
-assign jaddr = PC[25:0];
+// CHECK WHICH MemOut VALUES SHOULD ACTUALLY GO HERE
+assign RS = InstructIn[25:21];
+assign RT = InstructIn[20:16];
+assign RD = InstructIn[15:11];
+assign imm = InstructIn[15:0];
+assign jaddr = InstructIn[25:0];
+
 
 mux3to1by5 Mux3(RegAw, Mux3control, 5'b11111, RT, RD); //output, address, 31, rd, rt
 mux3to1by32 Mux4(RegDw, Mux4control, newPC, DataReg, ALU3res); 
