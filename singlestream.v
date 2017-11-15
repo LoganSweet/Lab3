@@ -4,15 +4,11 @@
 `include "StateMachine.v"
 
 module singlestream(
-// inputs should be controls - which command are we doing
-//input [5:0] OpCode,
 input clk // internal clock
 );
-assign OpCode = InstructIn[31:26];
-wire [5:0] OpCode = 6'b100001;
+
+wire [5:0] OpCode = 6'b100001; // initializing this to something, just in case 
 StateMachine FSM(OpCode, zero3, clk, PCcontrol, Mux1control, Mux2control, Mem_WE, Dec1control, Mux3control, Mux4control, RegWE, Mux5control, ALU3control, Mux6control);
-
-
 
 wire [31:0] PC = 32'b0; // initial assignment - PC is 32 zeros 
 wire [31:0] PCp4;
@@ -66,8 +62,8 @@ wire RegWE;
 wire Mux5control;
 wire [31:0] Mux5out;
 
-wire carryout3; // trash from ALU2 that we don't need
-wire zero3;
+wire carryout3; // trash from ALU3 that we don't need
+wire zero3 = 0; // initialize it because maybe this is why it doesn't work
 wire overflow3;
 wire [2:0] ALU3control;
 
@@ -81,14 +77,14 @@ mux2to1by32 Mux1(newPC, Mux1control, ALU2out, PCp4); // output, address, ALU2out
 
 mux3to1by32 Mux6(choosePC, Mux6control, A, jConcat, newPC); // output, address, newPC, jConcat, A
 
-mux2to1by32 Mux2(MemAddr, Mux2control, ALU3res, PC);
+mux2to1by32 Mux2(MemAddr, Mux2control, ALU3res, newPC);
 
 //datamemory Memory(clk, MemOut, MemAddr, Mem_WE, B);
 datamemory Memory(clk, Mem_WE, MemAddr, B, MemOut);
 
 decoder32to2 Dec1(InstructIn, DataReg, Dec1control, MemOut);
 
-// CHECK WHICH MemOut VALUES SHOULD ACTUALLY GO HERE
+assign OpCode = InstructIn[31:26];
 assign RS = InstructIn[25:21];
 assign RT = InstructIn[20:16];
 assign RD = InstructIn[15:11];

@@ -1,5 +1,5 @@
 $date
-	Tue Nov 14 19:30:27 2017
+	Tue Nov 14 20:06:06 2017
 $end
 $version
 	Icarus Verilog
@@ -27170,7 +27170,7 @@ bx `2"
 bx _2"
 b0xx ^2"
 b0xx ]2"
-bx \2"
+b0xx \2"
 bx [2"
 b0xx Z2"
 bx00 Y2"

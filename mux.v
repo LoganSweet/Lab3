@@ -1,5 +1,5 @@
 //mux for lab 3
-
+/*
 module mux32to1by1
 	(
 	output      out,
@@ -8,33 +8,45 @@ module mux32to1by1
 	);
 	assign out=inputs[address];
 endmodule
-
+*/
 module mux2to1by32
 (
-output  [31:0]  muxout,
+output reg [31:0]  muxout,
 input  address,
 input[31:0] ALU2out,
 input[31:0] PCp4
 );
-wire[1:0] mux[1:0];			// Create a 2D array of wires
-assign mux[0] = PCp4;
-assign mux[1] = ALU2out;
-assign muxout = mux[address];	// Connect the output of the array
+  always @( address ) begin
+  	if (address == 0) begin
+  		muxout <= PCp4;
+  	end
+  	else if (address == 1) begin
+  		muxout <= ALU2out;
+  	end
+  end
 
 endmodule
 
 module mux3to1by5
 (
-output  [4:0]  regfileaddress,
+output reg [4:0]  regfileaddress,
 input [1:0]  mux3ctrl,
 input[4:0] thirtyone,
 input[4:0] rt,
 input[4:0] rd
-
 );
-    wire[3:0] inputs = {thirtyone, thirtyone, rt, rd};
-    wire[1:0] address = {mux3ctrl[1], mux3ctrl[0]};
-    assign regfileaddress = inputs[address];
+
+  always @( mux3ctrl ) begin
+  	if (mux3ctrl == 00) begin
+  		regfileaddress <= rd;
+  	end
+  	else if (mux3ctrl == 01) begin
+  		regfileaddress <= rt;
+  	end
+  	 else begin
+  		regfileaddress <= thirtyone;
+  	end
+  end
 endmodule
 
 
