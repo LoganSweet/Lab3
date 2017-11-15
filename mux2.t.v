@@ -18,6 +18,13 @@ reg[4:0] rt;
 reg[4:0] rd;
 mux3to1by5 TEST2(regfileaddress, mux3ctrl, thirtyone, rt, rd);
 
+wire  [31:0]  choosePC;
+reg [1:0]  address2;
+reg[31:0] A;
+reg[31:0] jConcat;
+reg[31:0] newPC;
+mux3to1by32 TEST3(choosePC, address2, A, jConcat, newPC);
+
 initial begin
 
 $display("Out | ExOut | Address | ALU2out | PCp4 ");
@@ -35,7 +42,13 @@ $display("%b 10101 	%b %b %b 	%b", regfileaddress, mux3ctrl, thirtyone, rt, rd);
 thirtyone = 5'b11111; rt = 5'b10101; rd = 5'b01010; mux3ctrl = 10; #400
 $display("%b 11111 	%b %b %b 	%b", regfileaddress, mux3ctrl, thirtyone, rt, rd);
 
-
+$display("Out | ExOut | Add | A | Concat | newPC ");
+A = 32'b1011; jConcat = 32'b0100; newPC = 32'b0110; address2 = 00; #400
+$display("%b 0110 	%b %b %b 	%b", choosePC[3:0], address2, A[3:0], jConcat[3:0], newPC[3:0]);
+A = 32'b1011; jConcat = 32'b0100; newPC = 32'b0110; address2 = 01; #400
+$display("%b 0100 	%b %b %b 	%b", choosePC[3:0], address2, A[3:0], jConcat[3:0], newPC[3:0]);
+A = 32'b1011; jConcat = 32'b0100; newPC = 32'b0110; address2 = 10; #400
+$display("%b 1011 	%b %b %b 	%b", choosePC[3:0], address2, A[3:0], jConcat[3:0], newPC[3:0]);
 end
 
 

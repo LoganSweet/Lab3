@@ -106,7 +106,7 @@ ALU ALU3(ALU3res, carryout3, zero3, overflow3, A, Mux5out, ALU3control);
 
 // mux 6
 wire [29:0] jConcat_intermediate;
-assign jConcat_intermediate = {PC[31:28], jaddr}; // DOUBLE CHECK - WHICH PC VALUES GO HERE
+assign jConcat_intermediate = {newPC[31:28], jaddr}; // DOUBLE CHECK - WHICH PC VALUES GO HERE
 assign jConcat = {jConcat_intermediate, 2'b00};
 
 
@@ -119,7 +119,7 @@ input [15:0] immediate,
 output reg [31:0] SEimm
 );
 
-always @(posedge immediate) begin
+always @(immediate) begin
 	if (immediate[15] == 0)
 		SEimm <= {16'b0000000000000000, immediate};
 	else if (immediate[15] == 1)

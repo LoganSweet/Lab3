@@ -73,7 +73,7 @@ output reg		Clk
   #5 Clk=1; #5 Clk=0;	// Generate single clock pulse
 
   // Verify expectations and report test result
-  if(muxout != 32'b1110) begin
+  if(muxout != 32'b1010) begin
     dutpassed = 0;	// Set to 'false' on failure
     $display("Test Case 2 Failed");
   end

@@ -52,20 +52,25 @@ endmodule
 
 module mux3to1by32
 (
-output  [31:0]  choosePC,
+output reg [31:0]  choosePC,
 input [1:0]  address,
 input[31:0] A,
 input[31:0] jConcat,
 input[31:0] newPC
 
 );
-wire[31:0] mux[3:0];			// Create a 2D array of wires
-assign mux[0] = newPC;
-assign mux[1] = jConcat;
-assign mux[2] = A;
-assign mux[3] = A; // this should never happen
-assign choosePC = mux[address];	// Connect the output of the array
 
+  always @( address ) begin
+  	if (address == 00) begin
+  		choosePC <= newPC;
+  	end
+  	else if (address == 01) begin
+  		choosePC <= jConcat;
+  	end
+  	 else begin
+  		choosePC <= A;
+  	end
+  end
 endmodule
 
 
