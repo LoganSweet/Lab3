@@ -34,13 +34,19 @@ module datamemory
   
   reg [31:0] mem[1023:0];  
   
-  always @(posedge clk) begin
+  always @(posedge clk) begin // updates the output
     if (regWE) begin
       mem[Addr] <= DataIn;
     end
   end
   
-  initial $readmemh("Test.dat", mem);
+  always @(negedge clk) begin // Need to update the memory file
+      if (regWE) begin
+          $writememh("AllZeros.dat", mem); // Write to file
+      end
+  end
+  
+ initial $readmemh("AllZeros.dat", mem); // I guess this won't actually be all zeros
     
   assign DataOut = mem[Addr];
 endmodule
