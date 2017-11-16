@@ -18,6 +18,7 @@ $display("Result | COut | Zero | OF | A | B | Cmd");
 operandA = 32'b100; operandB = 32'b001; command = 000; #300
 $display("%b | %b | %b | %b | %b | %b | %b", result[2:0], carryout, zero, overflow, operandA[2:0], operandB[2:0], command);
 
+
 end
 
 endmodule

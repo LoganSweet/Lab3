@@ -1,7 +1,6 @@
 // ALU for lab 3
 // this is based on the lab 1 ALU, which was structural 
 
-
 // This module is the same as the BitSlice32 module at the very end. We wrote BitSlice32 before ALU, and we only created ALU at the end as the cleanest version of our work.
 module ALU
 (
@@ -29,7 +28,7 @@ input[2:0]    command //Command
 	wire [size-1:0] OrNorXorOut;
 	wire [size-1:0] AddSubSLTSum;
  
-	SLT32 test(SLTSum, carryout, overflow, SLTflag, subtract, operandA, operandB, command, carryin);
+	SLT32 SLTinALU3n(SLTSum, carryout, overflow, SLTflag, subtract, operandA, operandB, command, carryin);
 	AddSubSLT32 trial(AddSubSLTSum, carryout, overflow, subtract, operandA, operandB, command, carryin);
 	AndNand32 trial1(AndNandOut, operandA, operandB, command);
 	OrNorXor32 trial2(OrNorXorOut, operandA, operandB, command);

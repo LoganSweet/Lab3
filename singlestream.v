@@ -79,7 +79,7 @@ mux2to1by32 Mux1(newPC, Mux1control, ALU2out, PCp4); // output, address, ALU2out
 mux2to1by32 Mux2(MemAddr, Mux2control, ALU3res, PC);
 
 //datamemory Memory(clk, MemOut, MemAddr, Mem_WE, B);
-datamemory Memory(clk, Mem_WE, MemAddr, B, MemOut);
+datamemory Memory(clk, Mem_WE, MemAddr, B, MemOut);		// Inputs: clk, regWE,Addr,DataIn \\\ Output:DataOut
 
 decoder32to2 Dec1(InstructIn, DataReg, Dec1control, MemOut);
 
@@ -93,12 +93,13 @@ assign jaddr = InstructIn[25:0];
 
 mux3to1by5 Mux3(RegAw, Mux3control, 5'b11111, RD, RT); //output, address, 31, rd, rt
 mux3to1by32 Mux4(RegDw, Mux4control, PC, DataReg, ALU3res); 
-regfile DataRegister(A, B, RegDw, RS, RT, RegAw, RegWE, clk);
+regfile DataRegister(A, B, RegDw, RS, RT, RegAw, RegWE, clk); // B is an output,  ReadData2 
 
 // sign extend
 signextend extend(imm, SEimm);
+
 //mux5
-mux2to1by32 Mux5(Mux5out, Mux5control, SEimm, B);
+mux2to1by32 Mux5(Mux5out, Mux5control, SEimm, B); // Outputs: muxout\\ Input: address,ALUout,PCp4
 
 //alu3
 ALU ALU3(ALU3res, carryout3, zero3, overflow3, A, Mux5out, ALU3control);
