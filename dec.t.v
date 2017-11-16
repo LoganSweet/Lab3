@@ -1,4 +1,5 @@
 `include "decoder.v"
+/*
 module testdec1to32();
 
 wire  [31:0]  out;
@@ -59,6 +60,7 @@ end
   endtest = 1; 
     end
 endmodule
+*/
 
 module testdec32to2();
 wire [31:0]	InstructIn;
@@ -100,7 +102,7 @@ output reg Clk
 initial begin
 //out = 32'b0;
 address = 0;
-address = 5'b0;
+DataIn = 32'b0101;
 Clk = 0;
 end
 
@@ -109,13 +111,20 @@ end
     dutpassed = 1;
     #10
     
-    address = 00000;
-    enable = 1;
+    address = 0;
     #5 Clk=1; #5 Clk=0;	// Generate single clock pulse
     
-    if(out != 32'b001) begin
+    if(InstructIn != 32'b0101) begin
     dutpassed = 0;	// Set to 'false' on failure
     $display("Test Case 1 Failed");
+  end
+  
+      address = 1;
+    #5 Clk=1; #5 Clk=0;	// Generate single clock pulse
+    
+    if(DataReg != 32'b0101) begin
+    dutpassed = 0;	// Set to 'false' on failure
+    $display("Test Case 2 Failed");
   end
        #5
   endtest = 1; 

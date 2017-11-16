@@ -9,7 +9,7 @@ input			address, // address - where does DataIn go?
 input [size-1:0]	DataIn
 );
 parameter size = 32;
-always @(DataIn) begin
+always @(*) begin
 	if (address == 0)
 		InstructIn <= DataIn; 
 	if (address == 1)
