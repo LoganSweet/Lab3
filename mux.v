@@ -40,6 +40,8 @@ input[4:0] rd
   	else if (mux3ctrl == 11)begin
   		regfileaddress <= thirtyone;
   	end
+  	else
+  		regfileaddress <= thirtyone;
 
   end
 endmodule

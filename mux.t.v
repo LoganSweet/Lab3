@@ -83,6 +83,7 @@ output reg		Clk
 end
 endmodule
 
+/*
 module testmux351();
 
 wire [4:0]  regfileaddress;
@@ -124,7 +125,8 @@ output reg Clk
 );
 
   initial begin
-	thirtyone = 11111;
+  	mux3ctrl = 00;
+	thirtyone = 5'b11111;
     rt=00100;
     rd=11001;
     Clk=0;
@@ -136,7 +138,9 @@ output reg Clk
   // Test Case 1: 
   //   Do we get rd at muxout? we should
 	mux3ctrl = 00;
-
+	thirtyone = 5'b11111;
+    rt=00100;
+    rd=11001;
   #5 Clk=1; #5 Clk=0;	// Generate single clock pulse
 
   // Verify expectations and report test result
@@ -159,18 +163,16 @@ output reg Clk
   
       // Test Case 3: 
   //   Do we get 31 at muxout? we should
-	mux3ctrl = 11;
-
+	mux3ctrl = 10;
   #5 Clk=1; #5 Clk=0;	// Generate single clock pulse
-
   // Verify expectations and report test result
   if(regfileaddress != 11111) begin
     dutpassed = 0;	// Set to 'false' on failure
     $display("Test Case 3 Failed");
   end
-  
     #5
   endtest = 1;
 end
 endmodule
+*/
 
