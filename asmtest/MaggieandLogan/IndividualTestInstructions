@@ -1,11 +1,14 @@
 Each of the follwing sections are the memory dumps from individual instruction types in Mars. 
 They will be preceeded by the name of the operation that they are doing, then the data code that can be copied and pasted to test it with the CPU. 
 
-LW 
-
-
-SW 
-
+LW and SW : at the end 
+20040004
+20050003
+23bdfff8
+afa40004
+afa50000
+8fb10000
+8fb00004
 
 J : answers should all be zero
 20020000
@@ -14,11 +17,14 @@ J : answers should all be zero
 20030001
 00031020
 
-JR 
-
-
-JAL 
-
+JAL and JR : everything but $ra shnould be zero always
+0c000004
+08000007
+20020005
+20030005
+20020000
+20030000
+03e00008
 
 BNE : all 1s and 0s, no 5. last thing should be a zero
 20020001
