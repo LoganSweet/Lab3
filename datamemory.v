@@ -46,7 +46,7 @@ module datamemory
       end
   end
   
- initial $readmemh("AllZeros.dat", mem); // I guess this won't actually be all zeros
+ initial $readmemh("Test.dat", mem); // I guess this won't actually be all zeros
     
   assign DataOut = mem[Addr];
 endmodule

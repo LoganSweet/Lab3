@@ -7,10 +7,10 @@ module singlestream(
 input clk // internal clock
 );
 
-wire [5:0] OpCode = 6'b100001; // initializing this to something, just in case 
+wire [5:0] OpCode; // initializing this to something, just in case 
 StateMachine FSM(OpCode, zero3, clk, PCcontrol, Mux1control, Mux2control, Mem_WE, Dec1control, Mux3control, Mux4control, RegWE, Mux5control, ALU3control, Mux6control);
 
-wire [31:0] PC = 32'b0; // initial assignment - PC is 32 zeros 
+wire [31:0] PC; // initial assignment - PC is 32 zeros 
 wire [31:0] PCp4;
 wire [31:0] choosePC; // output of mux 6, goes into Program Counter register
 wire PCcontrol; // to control the Program Counter - unclear when this should be true
@@ -75,9 +75,8 @@ ALU ALU2(ALU2out, carryout2, zero2, overflow2, PCp4, SEimm, ADD);
 
 mux2to1by32 Mux1(newPC, Mux1control, ALU2out, PCp4); // output, address, ALU2out, PCp4
 
-mux3to1by32 Mux6(choosePC, Mux6control, A, jConcat, newPC); // output, address, newPC, jConcat, A
 
-mux2to1by32 Mux2(MemAddr, Mux2control, ALU3res, newPC);
+mux2to1by32 Mux2(MemAddr, Mux2control, ALU3res, PC);
 
 //datamemory Memory(clk, MemOut, MemAddr, Mem_WE, B);
 datamemory Memory(clk, Mem_WE, MemAddr, B, MemOut);
@@ -93,7 +92,7 @@ assign jaddr = InstructIn[25:0];
 
 
 mux3to1by5 Mux3(RegAw, Mux3control, 5'b11111, RT, RD); //output, address, 31, rd, rt
-mux3to1by32 Mux4(RegDw, Mux4control, newPC, DataReg, ALU3res); 
+mux3to1by32 Mux4(RegDw, Mux4control, PC, DataReg, ALU3res); 
 regfile DataRegister(A, B, RegDw, RS, RT, RegAw, RegWE, clk);
 
 // sign extend
@@ -108,6 +107,8 @@ ALU ALU3(ALU3res, carryout3, zero3, overflow3, A, Mux5out, ALU3control);
 wire [29:0] jConcat_intermediate;
 assign jConcat_intermediate = {newPC[31:28], jaddr}; // DOUBLE CHECK - WHICH PC VALUES GO HERE
 assign jConcat = {jConcat_intermediate, 2'b00};
+
+mux3to1by32 Mux6(choosePC, Mux6control, A, jConcat, newPC); // output, address, newPC, jConcat, A
 
 
 endmodule

@@ -23,16 +23,13 @@ input      [31:0]	d,
 input				wrenable,
 input				clk
 );
-genvar i; 
-generate 
-	for (i=0; i<32; i=i+1)
-		begin: rr32
-			always @(posedge clk) begin
-				if(wrenable) 
-					q[i] = d[i];
-			end
-		end 
-endgenerate
+
+initial q = 32'b0;
+
+always @(posedge clk) begin
+	if(wrenable) 
+		q = d;
+end
 
 endmodule
 

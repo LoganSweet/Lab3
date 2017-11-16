@@ -21,20 +21,6 @@ module StateMachine
 	output reg [2:0] ALU3,
 	output reg [1:0] Mux6
 );
-
-/*
-reg PC; // this controls whether the PC flip flop is enabled
-reg Mux1; // Mux1 controller
-reg Mux2; // Mux2 controller
-reg MemWrEn; // is memory write enable on or off
-reg Dec1; // Dec1 controller
-reg [1:0] Mux3;
-reg [1:0] Mux4;
-reg RegFWrEn;
-reg Mux5;
-reg [2:0] ALU3;
-reg [1:0] Mux6;
-*/ 
 localparam LoadWord = 6'b100011; // this should be some number that gives us enough options to have all of our commands
 localparam StoreWord = 6'b101011;
 localparam Jump = 6'b000010;
@@ -51,6 +37,19 @@ reg [5:0] command;
 
 reg [5:0] counter = 6'b000000;
 
+initial Mux2 = 0;
+initial Dec1 = 0;
+initial PCcontrol = 0 ;
+initial Mux1 = 0 ;
+initial Mux2 = 0 ;
+initial MemWrEn = 0 ; 
+initial Dec1  =0 ; 
+initial Mux3 =2'b00 ; 
+initial Mux4 =	2'b00 ;
+initial RegFWrEn = 0 ;	
+initial Mux5 = 1 ;
+initial ALU3 = 3'b000 ;		// should be whatever control number add is 
+initial Mux6 = 2'b00 ;	
 
 always @(posedge clk) begin
 if (counter == 2)

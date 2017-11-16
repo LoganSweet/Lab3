@@ -16,7 +16,7 @@ input  address,
 input[31:0] ALU2out,
 input[31:0] PCp4
 );
-  always @( address ) begin
+  always @( * ) begin
   	if (address == 0) begin
   		muxout <= PCp4;
   	end
@@ -36,7 +36,7 @@ input[4:0] rt,
 input[4:0] rd
 );
 
-  always @( mux3ctrl ) begin
+  always @( * ) begin
   	if (mux3ctrl == 00) begin
   		regfileaddress <= rd;
   	end
@@ -60,7 +60,7 @@ input[31:0] newPC
 
 );
 
-  always @( address ) begin
+  always @( * ) begin
   	if (address == 00) begin
   		choosePC <= newPC;
   	end
