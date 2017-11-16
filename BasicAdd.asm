@@ -9,6 +9,7 @@ main:
 
 # ex - let's start with number = 3
 addi $a0, $zero, 5
+addi $t3, $zero, 7
 
 
 end:

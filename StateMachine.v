@@ -24,12 +24,12 @@ module StateMachine
 localparam LoadWord = 6'b100011; // this should be some number that gives us enough options to have all of our commands
 localparam StoreWord = 6'b101011;
 localparam Jump = 6'b000010;
-localparam JumpReg = 6'b001000;
+localparam JumpReg = 6'b001001; // I MADE THIS UP 
 localparam JumpAndLink = 6'b000011;
 localparam BranchNotEqual = 6'b000101;
 localparam XORI = 6'b001110;
 localparam Add = 6'b100000;
-localparam Addi = 6'b001001; // MIPS is 001000
+localparam Addi = 6'b001000; // MIPS is 001000
 localparam Sub = 6'b100010;
 localparam SLT = 6'b101010;
 
@@ -52,7 +52,7 @@ initial ALU3 = 3'b000 ;		// should be whatever control number add is
 initial Mux6 = 2'b00 ;	
 
 always @(posedge clk) begin
-if (counter == 2)
+if (counter == 3)
 	counter <= 0 ;
 else 
 	counter = counter + 1 ;  
@@ -260,23 +260,25 @@ case (command)
 	
 	Addi: begin
 		if (counter == 1) begin
-			PCcontrol <= 		1 ;
+			PCcontrol <= 		0 ;
 			Mux1 <= 	0 ;
 			Mux2 <= 	0 ;
 			MemWrEn <= 	0 ; 
 			Dec1 <= 	0 ; 
 			Mux3 <= 	2'b00 ;
 			Mux4 <= 	2'b00 ;
-			RegFWrEn <= 0 ;
+			RegFWrEn <= 1 ; // I changed when
 			Mux5 <= 	1 ;
 			ALU3 <= 	3'b000 ;	
 			Mux6 <= 	2'b00 ;		
 		end 		// end of the thing when counter is 0 
-		if (counter == 2) begin
-			PCcontrol <= 		0 ;  	
+		else if (counter == 2) begin
+			PCcontrol <= 		1 ;  	
 			Mux3 <= 	2'b00 ;
-			RegFWrEn <= 1 ; 
+			RegFWrEn <= 0 ; 
 		end 		// end of the stage when counter is 1 
+		else
+			PCcontrol <=0;
 	end // end of addi
 	
 	Sub: begin

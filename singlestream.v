@@ -91,7 +91,7 @@ assign imm = InstructIn[15:0];
 assign jaddr = InstructIn[25:0];
 
 
-mux3to1by5 Mux3(RegAw, Mux3control, 5'b11111, RT, RD); //output, address, 31, rd, rt
+mux3to1by5 Mux3(RegAw, Mux3control, 5'b11111, RD, RT); //output, address, 31, rd, rt
 mux3to1by32 Mux4(RegDw, Mux4control, PC, DataReg, ALU3res); 
 regfile DataRegister(A, B, RegDw, RS, RT, RegAw, RegWE, clk);
 
