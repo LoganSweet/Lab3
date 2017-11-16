@@ -1,0 +1,51 @@
+Each of the follwing sections are the memory dumps from individual instruction types in Mars. 
+They will be preceeded by the name of the operation that they are doing, then the data code that can be copied and pasted to test it with the CPU. 
+
+LW 
+
+
+SW 
+
+
+J : answers should all be zero
+20020000
+20030000
+08000004
+20030001
+00031020
+
+JR 
+
+
+JAL 
+
+
+BNE : all 1s and 0s, no 5. last thing should be a zero
+20020001
+20030000
+14620001
+20430005
+
+XORI : answer is 110 (6)
+20040005
+38820003
+
+ADDI : answer is 101 (5)
+20040005
+
+ADD : answer is 1000 (8)
+20040005
+20050003
+00851020
+
+SUB : answer is 10 (2)
+20040005
+20050003
+00851022
+
+SLT : answer is 1 
+20040005
+20050003
+00a4102a
+
+
