@@ -271,7 +271,7 @@ case (command)
 			Mux5 <= 	1 ;
 			ALU3 <= 	3'b000 ;	
 			Mux6 <= 	2'b00 ;		
-		end 		// end of the thing when counter is 0 
+		end 		
 		else if (counter == 2) begin
 			PCcontrol <= 		1 ;  	
 			Mux3 <= 	2'b00 ;

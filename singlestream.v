@@ -2,6 +2,7 @@
 `include "regfile.v"
 `include "datamemory.v"
 `include "StateMachine.v"
+`include "adder.v"
 
 module singlestream(
 input clk // internal clock
@@ -102,7 +103,9 @@ signextend extend(imm, SEimm);
 mux2to1by32 Mux5(Mux5out, Mux5control, SEimm, B); // Outputs: muxout\\ Input: address,ALUout,PCp4
 
 //alu3
-ALU ALU3(ALU3res, carryout3, zero3, overflow3, A, Mux5out, ALU3control);
+// ALU ALU3(ALU3res, carryout3, zero3, overflow3, A, Mux5out, ALU3control);
+reg carryin3 = 0;
+adder add(ALU3res, carryout3, A, Mux5out, carryin3);
 
 // mux 6
 wire [29:0] jConcat_intermediate;
