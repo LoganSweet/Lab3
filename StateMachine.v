@@ -35,7 +35,7 @@ localparam SLT = 6'b101010;
 
 reg [5:0] command;
 
-reg [5:0] counter = 6'b000000;
+reg [5:0] counter = 6'b000011;
 
 initial Mux2 = 0;
 initial Dec1 = 0;
@@ -279,6 +279,7 @@ case (command)
 		end 		// end of the stage when counter is 1 
 		else
 			PCcontrol <=0;
+			//RegFWrEn <= 0;
 	end // end of addi
 	
 	Sub: begin

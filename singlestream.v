@@ -38,7 +38,7 @@ wire [31:0] A;
 
 wire [31:0] MemAddr;
 wire Mux2control;
-wire [31:0] ALU3res =32'b0;
+wire [31:0] ALU3res;
 
 wire [31:0] MemOut;
 wire Mem_WE;
