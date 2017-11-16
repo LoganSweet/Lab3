@@ -1,14 +1,5 @@
 //mux for lab 3
-/*
-module mux32to1by1
-	(
-	output      out,
-	input[4:0]  address,
-	input[31:0] inputs
-	);
-	assign out=inputs[address];
-endmodule
-*/
+
 module mux2to1by32
 (
 output reg [31:0]  muxout,
@@ -43,9 +34,13 @@ input[4:0] rd
   	else if (mux3ctrl == 01) begin
   		regfileaddress <= rt;
   	end
-  	 else begin
+  	 else if (mux3ctrl == 10)begin
   		regfileaddress <= thirtyone;
   	end
+  	else if (mux3ctrl == 11)begin
+  		regfileaddress <= thirtyone;
+  	end
+
   end
 endmodule
 

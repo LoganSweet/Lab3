@@ -14,7 +14,7 @@ initial begin
 $dumpfile("cpu.vcd");
 $dumpvars();
 
-#69690
+#20000
 $finish;
 end
 
