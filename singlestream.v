@@ -1,7 +1,7 @@
 //`include "alu_structural.v"
 `include "regfile.v"
 `include "datamemory.v"
-`include "StateMachine.v"
+`include "StateMachine2.v"
 `include "adder.v"
 
 module singlestream(
@@ -9,7 +9,7 @@ input clk // internal clock
 );
 
 wire [5:0] OpCode; // initializing this to something, just in case 
-StateMachine FSM(OpCode, zero3, clk, PCcontrol, Mux1control, Mux2control, Mem_WE, Dec1control, Mux3control, Mux4control, RegWE, Mux5control, ALU3control, Mux6control);
+StateMachine2 FSM(OpCode, func, zero3, clk, PCcontrol, Mux1control, Mux2control, Mem_WE, Dec1control, Mux3control, Mux4control, RegWE, Mux5control, ALU3control, Mux6control);
 
 wire [31:0] PC; // initial assignment - PC is 32 zeros 
 wire [31:0] PCp4;
@@ -84,12 +84,14 @@ datamemory Memory(clk, Mem_WE, MemAddr, B, MemOut);		// Inputs: clk, regWE,Addr,
 
 decoder32to2 Dec1(InstructIn, DataReg, Dec1control, MemOut);
 
+wire [5:0] func;
 assign OpCode = InstructIn[31:26];
 assign RS = InstructIn[25:21];
 assign RT = InstructIn[20:16];
 assign RD = InstructIn[15:11];
 assign imm = InstructIn[15:0];
 assign jaddr = InstructIn[25:0];
+assign func = InstructIn[5:0];
 
 
 mux3to1by5 Mux3(RegAw, Mux3control, 5'b11111, RD, RT); //output, address, 31, rd, rt
@@ -103,9 +105,9 @@ signextend extend(imm, SEimm);
 mux2to1by32 Mux5(Mux5out, Mux5control, SEimm, B); // Outputs: muxout\\ Input: address,ALUout,PCp4
 
 //alu3
-// ALU ALU3(ALU3res, carryout3, zero3, overflow3, A, Mux5out, ALU3control);
+ ALU ALU3(ALU3res, carryout3, zero3, overflow3, A, Mux5out, ALU3control);
 reg carryin3 = 0;
-adder add(ALU3res, carryout3, A, Mux5out, carryin3);
+//adder add(ALU3res, carryout3, A, Mux5out, carryin3);
 
 // mux 6
 wire [29:0] jConcat_intermediate;

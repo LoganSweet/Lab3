@@ -4,7 +4,7 @@
 
 `include "alu_structural.v"
 
-module StateMachine
+module StateMachine2
 (
 	input[5:0] opcode,  
 	input[5:0] func,
@@ -22,19 +22,47 @@ module StateMachine
 	output reg [2:0] ALU3,
 	output reg [1:0] Mux6
 );
-localparam LoadWord = 6'b100011; 
-localparam StoreWord = 6'b101011;
-localparam Jump = 6'b000010;
-localparam JumpReg = 6'b001001; // I MADE THIS UP 
-localparam JumpAndLink = 6'b000011;
-localparam BranchNotEqual = 6'b000101;
-localparam XORI = 6'b001110;
-localparam Add = 6'b000000; // MARS is giving me 000000
-localparam Addi = 6'b001000; // MIPS is 001000
-localparam Sub = 6'b100010;
-localparam SLT = 6'b101010;
 
-reg [5:0] command;
+localparam AddSubOP = 6'b000000;
+localparam AddF = 6'b100000;
+localparam SubF = 6'b100010;
+localparam SLTF = 6'b101010;
+localparam Add = 7'b1;
+localparam Sub = 7'b10;
+
+localparam AddiOP = 6'b001000; 
+localparam AddiF = 6'b000101;
+localparam Addi = 7'b11;
+
+localparam XORIOP = 6'b001110;
+localparam XORIF = 6'b000011;
+localparam XORI = 7'b100;
+
+localparam SWOP = 6'b101011;
+localparam SWF = 6'b000000;
+localparam StoreWord = 7'b101;
+
+localparam LWOP = 6'b100011; 
+localparam LWF = 6'b000000;
+localparam LoadWord = 7'b110;
+
+localparam JOP = 6'b000000;
+localparam JF = 6'b001100;
+localparam Jump = 7'b111;
+
+localparam JALF = 6'b001100;
+localparam JALOP = 6'b000011;
+localparam JumpAndLink = 7'b1000;
+localparam JRF = 6'b001000;
+localparam JumpReg = 7'b1001;
+
+
+localparam BNEOP = 6'b000101;
+localparam BNEF = 6'b110110;
+localparam BranchNotEqual = 7'b1010;
+localparam SLT = 7'b1011;
+
+reg [6:0] command;
 
 reg [5:0] counter = 6'b000011;
 
@@ -58,37 +86,37 @@ if (counter == 3)
 else 
 	counter = counter + 1 ;  
 
-if (opcode == LoadWord)
+if (opcode == LWOP && func == LWF)
 	command <= LoadWord;
 
-if (opcode == StoreWord)
+if (opcode == SWOP && func == SWF)
 	command <= StoreWord;	
 
-if (opcode == Jump)
+if (opcode == JOP && func == JF)
 	command <= Jump;
 
-if (opcode == JumpReg)
+if (opcode == JOP && func == JRF)
 	command <= JumpReg;
 	
-if (opcode == JumpAndLink)
+if (opcode == JALOP && func == JALF)
 	command <= JumpAndLink;	
 	
-if (opcode == BranchNotEqual)
+if (opcode == BNEOP && func == BNEF)
 	command <= BranchNotEqual;	
 	
-if (opcode == XORI)
+if (opcode == XORIOP && func == XORIF)
 	command <= XORI;	
 	
-if (opcode == Add)
+if (opcode == AddSubOP && func == AddF)
 	command <= Add;	
 	
-if (opcode == Addi)
+if (opcode == AddiOP && func == AddiF)
 	command <= Addi;	
 	
-if (opcode == Sub)
+if (opcode == AddSubOP && func == SubF)
 	command <= Sub;	
 	
-if (opcode == SLT)
+if (opcode == AddSubOP && func == SLTF)
 	command <= SLT;	
 	
 
@@ -98,13 +126,13 @@ case (command)
 		// maybe needs to establish that counter is zero here? 	
 		// if it does, then it needs to be at the beginning (or end?) of each one 
 		if (counter == 1) begin
-			PCcontrol <= 		1 ;
+			PCcontrol <= 		0 ;
 			Mux1 <= 	0 ;
-			Mux2 <= 	0 ;
+			Mux2 <= 	1 ;
 			MemWrEn <= 	0 ; 
 			Dec1 <= 	0 ; 
-			Mux3 <= 	2'b00 ; // I'm concerned about the feasibility of this - can you actually do it just like 00?
-			Mux4 <= 	2'b00 ;
+			Mux3 <= 	2'b01 ; // I'm concerned about the feasibility of this - can you actually do it just like 00?
+			Mux4 <= 	2'b01 ;
 			RegFWrEn <= 0 ;	
 			Mux5 <= 	1 ;
 			ALU3 <= 	3'b000 ;		// should be whatever control number add is 
@@ -112,20 +140,21 @@ case (command)
 		end 		// ends the first stage, counter 0 
 		
 		if (counter == 2) begin	
-			PCcontrol <= 		0 ;	
-			Mux2 <= 	1 ;	
+			PCcontrol <= 		1 ;	
+			Mux2 <= 	0 ;	
 			Dec1 <= 	0 ; 	
-			Mux3 <= 	2'b01 ;
-			Mux4 <= 	2'b01 ;			
+			Mux3 <= 	2'b00 ;
+			Mux4 <= 	2'b00 ;			
 			ALU3 <= 	3'b000 ;		// should be whatever control number add is 
 		end // end coumter is 1 
-				
+		else
+			PCcontrol <= 0;						
 	end // end of load word 
 	
 	StoreWord: begin	
 	
 		if (counter == 1) begin
-			PCcontrol <= 		1 ;
+			PCcontrol <= 		0 ;
 			Mux1 <= 	0 ;
 			Mux2 <= 	0 ;
 			MemWrEn <= 	0 ; 
@@ -139,10 +168,17 @@ case (command)
 		end 			// end the first stage when counter is 0 
 
 		if (counter == 2) begin		
-			PCcontrol <= 		0 ;
+			ALU3 <= 	3'b000 ;
+			Mux3 <= 	2'b00 ;
+			Mux5 <= 	1 ;
+			Mux6 <= 	2'b00 ;
+			Mux4 <= 	2'b00 ;
+			PCcontrol <= 		1 ;
 			Mux2 <= 	1 ;	
 			MemWrEn <= 	1 ; 
-		end 		// end the second stage when counter is 1 		
+		end 		// end the second stage when counter is 1 
+		else
+			PCcontrol <= 0;		
 	end // end of save word 
 	
 	Jump: begin
@@ -198,8 +234,8 @@ case (command)
 	BranchNotEqual: begin
 	
 		if (counter == 1) begin
-			PCcontrol <= 		1 ;
-			Mux1 <= 	0 ;
+			PCcontrol <= 		0 ;
+			Mux1 <= 	~zeroflag3 ;
 			Mux2 <= 	0 ;
 			MemWrEn <= 	0 ; 
 			Dec1 <= 	0 ; 
@@ -211,9 +247,11 @@ case (command)
 			Mux6 <= 	2'b00 ;
 		end 		// end of the 0th stage when counter is zero 
 		if (counter == 2) begin
-			PCcontrol <= 		0 ;
-			Mux1 <= 	~zeroflag3 ;
+			PCcontrol <= 		1 ;
+			Mux1 <= 	0 ;
 		end 			// end of the stage when counter is 1 
+		else
+			PCcontrol <= 0;		
 	end // end of branch if not equal
 	
 	XORI: begin
@@ -230,7 +268,7 @@ case (command)
 			ALU3 <= 	3'b010 ;	
 			Mux6 <= 	2'b00 ;
 		end 		// end of the thing when counter is 0 
-		if (counter == 2) begin
+		else if (counter == 2) begin
 			ALU3 <= 	3'b010 ;	
 			PCcontrol <= 		1 ;  	
 			Mux3 <= 	2'b01 ;
@@ -238,6 +276,8 @@ case (command)
 		end 		// end of the stage when counter is 1 
 		else
 			PCcontrol <= 0;
+			ALU3 <= 	3'b010 ;
+			RegFWrEn <= 0 ; 	
 	end // end of xor immediate  
 	
 	
