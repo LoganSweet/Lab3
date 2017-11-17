@@ -274,10 +274,13 @@ case (command)
 			Mux3 <= 	2'b01 ;
 			RegFWrEn <= 0 ; 
 		end 		// end of the stage when counter is 1 
-		else
+		else if (counter == 3) begin
+			ALU3 <= 3'b010;
 			PCcontrol <= 0;
-			ALU3 <= 	3'b010 ;
-			RegFWrEn <= 0 ; 	
+		end
+		else begin
+			PCcontrol <= 0;
+		end
 	end // end of xor immediate  
 	
 	
