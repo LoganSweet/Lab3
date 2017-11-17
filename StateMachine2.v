@@ -388,4 +388,3 @@ end // ends the always @ pos clock thing
 
 endmodule 
 
-
