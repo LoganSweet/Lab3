@@ -1,7 +1,7 @@
 //`include "alu_structural.v"
 `include "regfile.v"
 `include "datamemory.v"
-`include "StateMachine2.v"
+`include "StateMachine3.v"
 `include "adder.v"
 
 module singlestream(
@@ -115,7 +115,7 @@ assign jConcat = {jConcat_intermediate, 2'b00};
 
 mux3to1by32 Mux6(choosePC, Mux6control, A, jConcat, newPC); // output, address, newPC, jConcat, A
 
-StateMachine2 FSM(OpCode, func, zero3, clk, PCcontrol, Mux1control, Mux2control, Mem_WE, Dec1control, Mux3control, Mux4control, RegWE, Mux5control, ALU3control, Mux6control);
+StateMachine3 FSM(OpCode, func, zero3, clk, PCcontrol, Mux1control, Mux2control, Mem_WE, Dec1control, Mux3control, Mux4control, RegWE, Mux5control, ALU3control, Mux6control);
 
 endmodule
 
