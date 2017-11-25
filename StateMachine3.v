@@ -146,7 +146,7 @@ case (command)
 		Mux2 <= 	0 ;
 		MemWrEn <= 	0 ; 
 		Dec1 <= 	0 ; 
-		Mux3 <= 	2'b00 ;
+		Mux3 <= 	2'b01 ;
 		Mux4 <= 	2'b00 ;
 		RegFWrEn <= 0 ;
 		Mux5 <= 	0 ;
@@ -163,7 +163,7 @@ case (command)
 		Dec1 <= 	0 ; 
 		Mux3 <= 	2'b00 ;
 		Mux4 <= 	2'b00 ;
-		RegFWrEn <= 0 ; // I changed when
+		RegFWrEn <= 0 ; 
 		Mux5 <= 	1 ;
 		ALU3 <= 	3'b000 ;	
 		Mux6 <= 	2'b00 ;		
@@ -175,17 +175,53 @@ end
 
 always @(negedge clk) begin
 
+if (opcode == LWOP && func == LWF)
+	command <= LoadWord;
+
+if (opcode == SWOP && func == SWF)
+	command <= StoreWord;	
+
+if (opcode == JOP && func == JF)
+	command <= Jump;
+
+if (opcode == JOP && func == JRF)
+	command <= JumpReg;
+	
+if (opcode == JALOP && func == JALF)
+	command <= JumpAndLink;	
+	
+if (opcode == BNEOP && func == BNEF)
+	command <= BranchNotEqual;	
+	
+if (opcode == XORIOP && func == XORIF)
+	command <= XORI;	
+	
+if (opcode == AddSubOP && func == AddF)
+	command <= Add;	
+	
+//if (opcode == AddiOP && func == AddiF)
+if (opcode == AddiOP)
+	command <= Addi;	
+	
+if (opcode == AddSubOP && func == SubF)
+	command <= Sub;	
+	
+if (opcode == AddSubOP && func == SLTF)
+	command <= SLT;	
+
 case (command)
 	
 	Add: begin
 		PCcontrol <= 1 ;  	
 		RegFWrEn <= 1 ; 
+		Mux3<=2'b01;
 	end // end of add
 
 
 	Addi: begin
 		PCcontrol <= 1 ;  	
 		RegFWrEn <= 1 ; 
+		Mux3<=2'b00;
 	end 		// end of the stage when counter is 1 
 
 
